@@ -282,7 +282,7 @@ console.log(otpResponse)
           gender: g, // Using 'g' as parsed gender to match the validation
           weight: w,
           height: height, // Corrected to 'h' to match the parsed height variable
-          bmi: roundedBmi,
+          BMI: roundedBmi,
           bmiCategory: category // Using 'category' as the field name for BMI category
         },
         { new: true } // Ensures the updated document is returned
