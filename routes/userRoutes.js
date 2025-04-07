@@ -8,6 +8,7 @@ router.post("/v1/user/send-otp", UserController.sendOtp);
 router.post("/v1/user/verify-otp", UserController.verifyOtp);
 router.post(
   "/v1/user/update-profile",
+  authenticateToken,
   UserController.updateProfile 
 );
 

@@ -35,12 +35,12 @@ module.exports = {
 
   async verifyOtp(req, res) {
     try {
-      const { contactNo, otp, deviceToken, deviceType, ipAddress } = {
+      const { contactNo, otp, session_code,deviceToken, deviceType, ipAddress } = {
         ...req.body,
         ...req.query,
         ...req.params,
       };
-      const requiredFields = { contactNo, otp };
+      const requiredFields = { session_code,contactNo, otp };
 
       let currentDatetime = getCurrentDateAndTime();
 
@@ -53,7 +53,7 @@ module.exports = {
         if (!user) {
           // User not found, create new user and generate token
           const token = jwt.sign({ contactNo, ROLE_USER }, helper.jwtSecret);
-          var refferalCode = await helper.generateRefferalCode();
+      
           // Create new user document
           const newUserFields = {
             contactNo,
@@ -65,7 +65,7 @@ module.exports = {
             formSteps: 1,
             createdAt: currentDatetime,
             updatedAt: currentDatetime,
-            refferalCode: refferalCode,
+           
           };
 
           const newUser = new User(newUserFields);
@@ -80,12 +80,11 @@ module.exports = {
           await user.save(); // Update existing user
         }
 
-        const userData = user.asJson();
 
         res.json({
           status: "OK",
           message: "OTP Verified!!",
-          details: userData,
+          details: user,
         });
       } else {
         console.log(contactNo);
@@ -200,7 +199,7 @@ module.exports = {
         userId,
         {
           name,
-          contactNo,
+
           dob,
           gender,
           weight,
