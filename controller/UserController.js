@@ -20,7 +20,7 @@ module.exports = {
 
       const otpResponse = await helper.sendOtp(contactNo);
 
-      res.json({ status: "OK", details: otpResponse });
+      res.json({ status: "OK", details: otpResponse.details });
     } catch (error) {
       console.error("Error sending OTP:", error.message);
       res
