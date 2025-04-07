@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { User, ROLE_USER, STATUS_ACTIVE } = require("../models/userModel.js");
 const { isRequestDataValid } = require("../utils/appUtils.js");
 const { getCurrentDateAndTime } = require("../helper/dates.js");
+const helper = require("../helper/helper.js");
 require("dotenv").config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -39,7 +40,7 @@ module.exports = {
         ...req.query,
         ...req.params,
       };
-      const requiredFields = { contactNo, otp, deviceToken, deviceType };
+      const requiredFields = { contactNo, otp };
 
       let currentDatetime = getCurrentDateAndTime();
 
@@ -144,7 +145,7 @@ module.exports = {
       const userId = req.user._id; // Assuming user ID is extracted from auth middleware
       const {
         name,
-        contactNo,
+      
         weight,
         dob,
         gender,
@@ -159,14 +160,14 @@ module.exports = {
       };
       const requiredFields = {
         name,
-        contactNo,
+       
         weight,
         height,
         dob,
         gender,
         profile_image,
-        latitude,
-        longitude,
+        // latitude,
+        // longitude,
       };
       let requestDataValid = isRequestDataValid(requiredFields, "1234");
       if (requestDataValid !== true) {
