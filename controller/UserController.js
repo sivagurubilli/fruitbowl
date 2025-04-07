@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 module.exports = {
   async sendOtp(req, res) {
     try {
-      const contactNo = {
+      const {contactNo} = {
         ...req.body,
         ...req.query,
         ...req.params,
