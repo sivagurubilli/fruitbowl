@@ -100,7 +100,6 @@ console.log(otpResponse)
     try {
       let user = req.user;
 
-      let bmi = user.BMI;
 
       if (!user || user.formSteps !== 2) {
         return res.status(400).json({
@@ -109,20 +108,14 @@ console.log(otpResponse)
           details: "Please update your  details!",
         });
       }
-      if (!bmi) {
-        return res.status(400).json({
-          status: "NOK",
-          error: "BMI is required!",
-          details: "BMI is required!",
-        });
-      }
-      const bmiValue = Number(bmi);
+
+      let category = user.category;
+
 
       // Query products where the BMI is within the minBMI and maxBMI range
       const recommendedProducts = await Product.find({
         status: "active",
-        minBMI: { $lte: bmiValue },
-        maxBMI: { $gte: bmiValue },
+        category: category,
       });
 
       return res.status(200).json({
@@ -144,9 +137,9 @@ console.log(otpResponse)
       const userId = req.user._id; // Assuming user ID is extracted from auth middleware
       const {
         name,
-      
+      email,
         weight,
-        dob,
+        age,
         gender,
         height,
         profile_image,
@@ -159,10 +152,10 @@ console.log(otpResponse)
       };
       const requiredFields = {
         name,
-       
+       email,
         weight,
         height,
-        dob,
+        age,
         gender,
         profile_image,
         // latitude,
@@ -179,20 +172,7 @@ console.log(otpResponse)
           .json({ status: "NOK", error: "Invalid gender value." });
       }
 
-      const birthDate = new Date(dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birthDate.getDate())
-      ) {
-        age--;
-      }
-
-      // Calculate BMI
-      // Since we don't have height, we assume a default height of 1.70 meters.
-      const BMI = weight / (height * height);
+     
 
       // Update user profile
       const updatedUser = await User.findByIdAndUpdate(
@@ -200,12 +180,12 @@ console.log(otpResponse)
         {
           name,
 
-          dob,
+          age,
           gender,
           weight,
           height,
-          age,
-          BMI,
+   
+          email,
           profile_image,
           latitude,
           formSteps: 2,
@@ -234,4 +214,84 @@ console.log(otpResponse)
       });
     }
   },
-};
+
+
+
+  async  checkBMI(req, res) {
+    try {
+      const { weight, height, age, gender } = {   ...req.body,
+        ...req.query,
+        ...req.params,};
+  
+      // Validate presence
+      if ([weight, height, age, gender].some(v => v == null)) {
+        return res.status(400).json({
+          status: "NOK",
+          error: "weight, height, age and gender are all required."
+        });
+      }
+  
+      // Parse and validate numeric
+      const w = parseFloat(weight);
+      const h = parseFloat(height);
+      const a = parseInt(age, 10);
+      const g = parseInt(gender, 10);
+  
+      if (isNaN(w) || w <= 0 || isNaN(h) || h <= 0) {
+        return res.status(400).json({
+          status: "NOK",
+          error: "weight and height must be positive numbers."
+        });
+      }
+      if (isNaN(a) || a <= 0) {
+        return res.status(400).json({
+          status: "NOK",
+          error: "age must be a positive integer."
+        });
+      }
+      if (![1,2,3].includes(g)) {
+        return res.status(400).json({
+          status: "NOK",
+          error: "gender must be one of 1 (male), 2 (female), or 3 (other)."
+        });
+      }
+  
+      // Calculate BMI
+      const bmi = w / (h * h);
+      const roundedBmi = parseFloat(bmi.toFixed(2));
+  
+      // Determine category for adults
+      let category;
+      if (a >= 18) {
+        if (bmi < 18.5) category = 1; //Underweight
+        else if (bmi < 25) category = 2; //"Normal weight"
+        else if (bmi < 30) category = 3; //"Overweight"
+        else category = 4; //obesity
+      } else {
+        // Pediatric note
+        category = "Use pediatric growth chart for interpretation";
+      }
+      const userId = req.user._id;
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,{ age: a,
+        gender,
+        weight: w,
+        height: h,
+        bmi: roundedBmi,
+        category})
+
+
+      return res.status(200).json({
+        status: "OK",
+        details: updatedUser
+        
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "NOK",
+        error: err.message
+      });
+    }
+},
+
+}

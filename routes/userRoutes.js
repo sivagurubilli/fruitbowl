@@ -11,6 +11,14 @@ router.post(
   authenticateToken,
   UserController.updateProfile 
 );
+router.post(
+  "/v1/user/check-bmi",
+  authenticateToken,
+  UserController.checkBMI 
+);
+
+
+
 
 router.post("/v1/user/get-recomended-products",authenticateToken, UserController.getUserRecommendedProducts);
 
