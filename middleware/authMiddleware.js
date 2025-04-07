@@ -7,6 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const authenticateToken = async (req, res, next) => {
   const token = req.headers.authcode;
 
+  
   if (!token) {
     return res
       .status(401)
