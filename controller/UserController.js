@@ -19,8 +19,8 @@ module.exports = {
       console.log("Contact Number:", contactNo);
 
       const otpResponse = await helper.sendOtp(contactNo);
-
-      res.json({ status: "OK", details: otpResponse.details });
+console.log(otpResponse)
+      res.json({ status: "OK", details: otpResponse.Details });
     } catch (error) {
       console.error("Error sending OTP:", error.message);
       res
