@@ -10,8 +10,7 @@ async createProduct  (req, res) {
       image,
       status,
       productItems,
-      maxBMI,
-      minBMI,
+  
       price,
       discountPrice,
     } = {
@@ -27,8 +26,6 @@ async createProduct  (req, res) {
       status,
       productItems,
       price,
-      maxBMI,
-      minBMI,
       discountPrice,
     };
     let requestDataValid = isRequestDataValid(requiredFields, "1234");
@@ -44,8 +41,7 @@ async createProduct  (req, res) {
       status,
       productItems,
       price,
-      maxBMI,
-      minBMI,
+
       discountPrice,
     });
     await product.save();

@@ -3,6 +3,7 @@ const { User, ROLE_USER, STATUS_ACTIVE } = require("../models/userModel.js");
 const { isRequestDataValid } = require("../utils/appUtils.js");
 const { getCurrentDateAndTime } = require("../helper/dates.js");
 const helper = require("../helper/helper.js");
+const { Product } = require("../models/productModel.js");
 require("dotenv").config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -109,19 +110,18 @@ console.log(otpResponse)
         });
       }
 
-      let category = user.category;
 
-
-      // Query products where the BMI is within the minBMI and maxBMI range
-      const recommendedProducts = await Product.find({
+      let products = await Product.find({
         status: "active",
-        category: category,
-      });
-
+      }).populate("category");          // bring in the Category doc
+  
+      // 2. Filter by the Category.categoryType matching user.bmiCategory
+      products = products.filter(p => p.category.categoryType === user.bmiCategory);
+  
       return res.status(200).json({
         status: "OK",
         message: "Recommended products fetched successfully",
-        details: recommendedProducts,
+        details: products,
       });
     } catch (error) {
       console.error(error);
@@ -233,10 +233,10 @@ console.log(otpResponse)
   
       // Parse and validate numeric
       const w = parseFloat(weight);
-      const h = parseFloat(height);
+      const h = parseFloat(height/100);
       const a = parseInt(age, 10);
       const g = parseInt(gender, 10);
-  
+      
       if (isNaN(w) || w <= 0 || isNaN(h) || h <= 0) {
         return res.status(400).json({
           status: "NOK",
@@ -256,10 +256,11 @@ console.log(otpResponse)
         });
       }
   
+      
       // Calculate BMI
       const bmi = w / (h * h);
       const roundedBmi = parseFloat(bmi.toFixed(2));
-  
+
       // Determine category for adults
       let category;
       if (a >= 18) {
@@ -271,14 +272,16 @@ console.log(otpResponse)
         // Pediatric note
         category = "Use pediatric growth chart for interpretation";
       }
+
+      console.log(category)
       const userId = req.user._id;
       const updatedUser = await User.findByIdAndUpdate(
         userId,{ age: a,
         gender,
         weight: w,
-        height: h,
-        bmi: roundedBmi,
-        category})
+        height: height,
+        BMI: roundedBmi,
+        bmiCategory: category})
 
 
       return res.status(200).json({

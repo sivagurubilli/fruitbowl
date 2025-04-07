@@ -20,6 +20,6 @@ router.post(
 
 
 
-router.post("/v1/user/get-recomended-products",authenticateToken, UserController.getUserRecommendedProducts);
+router.get("/v1/user/get-recomended-products",authenticateToken, UserController.getUserRecommendedProducts);
 
 module.exports = router;

@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema(
     age:{
         type:Number,
     },
+    bmiCategory:{
+      type:Number,
+    },
     weight:{
       type:Number,
   },

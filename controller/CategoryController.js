@@ -3,19 +3,19 @@ const { isRequestDataValid } = require("../utils/appUtils");
 module.exports = {
  async createCategory (req, res) {
   try {
-    const { name, description, image, status } = {
+    const { name, description,categoryType, image, status } = {
       ...req.body,
       ...req.query,
       ...req.params,
     };
 
-    const requiredFields = { name, description, image, status };
+    const requiredFields = { name, description,categoryType, image, status };
     let requestDataValid = isRequestDataValid(requiredFields, "1234");
     if (requestDataValid !== true) {
       return res.status(400).json({ status: "NOK", error: requestDataValid });
     }
 
-    const category = new Category({ name, description , image, status});
+    const category = new Category({ name,categoryType, description , image, status});
     await category.save();
 
     res
