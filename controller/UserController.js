@@ -273,17 +273,21 @@ console.log(otpResponse)
         category = "Use pediatric growth chart for interpretation";
       }
 
-      console.log(category)
+     
       const userId = req.user._id;
       const updatedUser = await User.findByIdAndUpdate(
-        userId,{ age: a,
-        gender,
-        weight: w,
-        height: height,
-        BMI: roundedBmi,
-        bmiCategory: category})
-
-
+        userId,
+        {
+          age: a,
+          gender: g, // Using 'g' as parsed gender to match the validation
+          weight: w,
+          height: height, // Corrected to 'h' to match the parsed height variable
+          bmi: roundedBmi,
+          bmiCategory: category // Using 'category' as the field name for BMI category
+        },
+        { new: true } // Ensures the updated document is returned
+      );
+ 
       return res.status(200).json({
         status: "OK",
         details: updatedUser
