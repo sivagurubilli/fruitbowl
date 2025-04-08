@@ -20,11 +20,11 @@ router.post(
 
 
 
-router.post("/v1/user/add-address", UserAdressController.addUserAddress);
-router.get("/v1/user/get-address", UserAdressController.getUserAddresses);
-router.put("/v1/user/update-address", UserAdressController.updateUserAddress);
-router.delete("/v1/user/delete-address", UserAdressController.deleteUserAddress);
-router.put("/v1/user/address/set-default", UserAdressController.setDefaultAddress);
+router.post("/v1/user/add-address",authenticateToken, UserAdressController.addUserAddress);
+router.get("/v1/user/get-address",authenticateToken, UserAdressController.getUserAddresses);
+router.put("/v1/user/update-address", authenticateToken,UserAdressController.updateUserAddress);
+router.delete("/v1/user/delete-address", authenticateToken,UserAdressController.deleteUserAddress);
+router.put("/v1/user/address/set-default", authenticateToken,UserAdressController.setDefaultAddress);
 
 router.get("/v1/user/get-recomended-products",authenticateToken, UserController.getUserRecommendedProducts);
 

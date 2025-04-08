@@ -57,8 +57,8 @@ const userAddressSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Active', 'Inactive'],
-    default: 'Active'
+    enum: ['active', 'inactive'],
+    default: 'active'
   },
  latitude:{
     type: Number,
