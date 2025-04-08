@@ -1,6 +1,6 @@
-import { getCurrentDateAndTime } from "../helper/dates";
-import { UserAddress } from "../models/addressModel";
-import { isRequestDataValid } from "../utils/appUtils";
+const { UserAddress } = require("../models/addressModel.js");
+const { isRequestDataValid } = require("../utils/appUtils.js");
+const { getCurrentDateAndTime } = require("../helper/dates.js");
 
 // Controller for User Address
 module.exports = {
